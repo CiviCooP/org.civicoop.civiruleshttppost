@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<menu>
+  <item>
+    <path>civicrm/civirules/action/form/http_post_action</path>
+    <page_callback>CRM_Civiruleshttppost_Form_HttpPostAction</page_callback>
+    <title>HttpPostAction</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
+</menu>
