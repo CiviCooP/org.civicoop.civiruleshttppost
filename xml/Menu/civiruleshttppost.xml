@@ -5,5 +5,20 @@
     <page_callback>CRM_Civiruleshttppost_Form_HttpPostAction</page_callback>
     <title>HttpPostAction</title>
     <access_arguments>access CiviCRM</access_arguments>
+    <access_arguments>administer CiviCRM</access_arguments>
+  </item>
+  <item>
+    <path>civicrm/civirules/action/form/twitter_action</path>
+    <page_callback>CRM_CiviruleTwitter_Form_TwitterAction</page_callback>
+    <title>HttpPostAction</title>
+    <access_arguments>access CiviCRM</access_arguments>
+    <access_arguments>administer CiviCRM</access_arguments>
+  </item>
+  <item>
+    <path>civicrm/admin/twitter_account</path>
+    <page_callback>CRM_CiviruleTwitter_Page_TwitterAccount</page_callback>
+    <title>Twitter accounts</title>
+    <access_arguments>access CiviCRM</access_arguments>
+    <access_arguments>administer CiviCRM</access_arguments>
   </item>
 </menu>

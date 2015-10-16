@@ -4,9 +4,9 @@ class CRM_Civiruleshttppost_HttpPostAction extends CRM_Civirules_Action {
 
   public function processAction(CRM_Civirules_TriggerData_TriggerData $triggerData) {
     //do the http post process
-    $uri = $this->replaceTokens($this->getUri(), $triggerData->getContactId());
+    $uri = $this->replaceUriTokens($triggerData);
     $method = $this->getHttpMethod();
-    $body = $this->replaceTokens($this->getRequestBody(), $triggerData->getContactId());
+    $body = $this->replaceRequestBodyTokens($triggerData);
     switch (strtolower($method)) {
       case 'post':
         $request = \Httpful\Request::post($uri, $body);
@@ -33,9 +33,17 @@ class CRM_Civiruleshttppost_HttpPostAction extends CRM_Civirules_Action {
         throw new Exception('Invalid HTTP Method');
     }
 
-    $request = $this->alterHttpRequestObject($request);
+    $request = $this->alterHttpRequestObject($request, $triggerData);
     $response = $request->send();
-    $this->handleResponse($response);
+    $this->handleResponse($response, $triggerData);
+  }
+
+  protected function replaceUriTokens(CRM_Civirules_TriggerData_TriggerData $triggerData) {
+    return $this->replaceTokens($this->getUri(), $triggerData->getContactId());
+  }
+
+  protected function replaceRequestBodyTokens(CRM_Civirules_TriggerData_TriggerData $triggerData) {
+    return $this->replaceTokens($this->getRequestBody(), $triggerData->getContactId());
   }
 
   /**
@@ -47,7 +55,7 @@ class CRM_Civiruleshttppost_HttpPostAction extends CRM_Civirules_Action {
    * @param \Httpful\Response $response
    * @throws \Exception
    */
-  protected function handleResponse(\Httpful\Response $response) {
+  protected function handleResponse(\Httpful\Response $response, CRM_Civirules_TriggerData_TriggerData $triggerData) {
     //by default throw an error if response is not a 200 response
     if ($response->hasErrors()) {
       throw new Exception('Invalid response. Got a HTTP '.$response->code."\r\n\r\n".$response->raw_headers."\r\n\r\n".$response->raw_body);
@@ -64,7 +72,7 @@ class CRM_Civiruleshttppost_HttpPostAction extends CRM_Civirules_Action {
    * @param \Httpful\Request $request
    * @return \Httpful\Request
    */
-  protected function alterHttpRequestObject(\Httpful\Request $request) {
+  protected function alterHttpRequestObject(\Httpful\Request $request, CRM_Civirules_TriggerData_TriggerData $triggerData) {
     return $request;
   }
 

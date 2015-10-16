@@ -5,6 +5,9 @@ require_once 'civiruleshttppost.civix.php';
 if (!class_exists('\Httpful\Bootstrap')) {
   require_once('httpful/bootstrap.php');
 }
+if (!class_exists('OAuthRequestSigner')) {
+  require_once('oauth-php/library/OAuthRequestSigner.php');
+}
 
 /**
  * Implements hook_civicrm_config().
@@ -127,16 +130,16 @@ function civiruleshttppost_civicrm_alterSettingsFolders(&$metaDataFolders = NULL
 }
 
 /**
- * Functions below this ship commented out. Uncomment as required.
+ * Implementation of hook civicrm_navigationMenu
+ * to create a CiviRules menu item in the Administer menu
  *
-
-/**
- * Implements hook_civicrm_preProcess().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_preProcess
- *
-function civiruleshttppost_civicrm_preProcess($formName, &$form) {
-
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_navigationMenu
+ */
+function civiruleshttppost_civicrm_navigationMenu( &$params ) {
+  $item = array (
+    'name'          =>  ts('Twitter accounts'),
+    'url'           =>  CRM_Utils_System::url('civicrm/admin/twitter_account', 'reset=1', true),
+    'permission'    => 'administer CiviCRM',
+  );
+  _civirules_civix_insert_navigation_menu($params, 'Administer', $item);
 }
-
-*/
