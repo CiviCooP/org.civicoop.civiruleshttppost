@@ -7,71 +7,67 @@ require_once 'CRM/Core/Form.php';
  *
  * @see http://wiki.civicrm.org/confluence/display/CRMDOC43/QuickForm+Reference
  */
-class CRM_Civiruleshttppost_Form_HttpPostAction extends CRM_Core_Form {
+class CRM_Civiruleshttppost_Form_HttpPostAction extends CRM_CivirulesActions_Form_Form {
   function buildQuickForm() {
+    $this->setFormTitle();
 
-    // add form elements
-    $this->add(
-      'select', // field type
-      'favorite_color', // field name
-      'Favorite Color', // field label
-      $this->getColorOptions(), // list of options
-      true // is required
-    );
+    $this->add('hidden', 'rule_action_id');
+    $this->add('select', 'http_method', ts('URI'), $this->getHttpMethods(), true);
+    $this->add('text', 'uri', ts('URI'), true);
+    $this->add('textarea', 'request_body', ts('Request Body'));
+
     $this->addButtons(array(
-      array(
-        'type' => 'submit',
-        'name' => ts('Submit'),
-        'isDefault' => TRUE,
-      ),
-    ));
+      array('type' => 'next', 'name' => ts('Save'), 'isDefault' => TRUE,),
+      array('type' => 'cancel', 'name' => ts('Cancel'))));
 
-    // export form elements
-    $this->assign('elementNames', $this->getRenderableElementNames());
     parent::buildQuickForm();
   }
 
+  /**
+   * Overridden parent method to set default values
+   *
+   * @return array $defaultValues
+   * @access public
+   */
+  public function setDefaultValues() {
+    $defaultValues = parent::setDefaultValues();
+    $data = unserialize($this->ruleAction->action_params);
+    if (!empty($data['http_method'])) {
+      $defaultValues['http_method'] = $data['http_method'];
+    }
+    if (!empty($data['uri'])) {
+      $defaultValues['uri'] = $data['uri'];
+    }
+    if (!empty($data['request_body'])) {
+      $defaultValues['request_body'] = $data['request_body'];
+    }
+    return $defaultValues;
+  }
+
+  protected function getSubmittedData() {
+    $data = array();
+    $data['http_method'] = $this->_submitValues['http_method'];
+    $data['uri'] = $this->_submitValues['uri'];
+    $data['request_body'] = $this->_submitValues['request_body'];
+    return $data;
+  }
+
   function postProcess() {
-    $values = $this->exportValues();
-    $options = $this->getColorOptions();
-    CRM_Core_Session::setStatus(ts('You picked color "%1"', array(
-      1 => $options[$values['favorite_color']]
-    )));
+    $data = $this->getSubmittedData();
+    $this->ruleAction->action_params = serialize($data);
+    $this->ruleAction->save();
     parent::postProcess();
   }
 
-  function getColorOptions() {
-    $options = array(
-      '' => ts('- select -'),
-      '#f00' => ts('Red'),
-      '#0f0' => ts('Green'),
-      '#00f' => ts('Blue'),
-      '#f0f' => ts('Purple'),
+  function getHttpMethods() {
+    return array(
+      'GET' => 'GET',
+      'POST' => 'POST',
+      'PUT' => 'PUT',
+      'DELETE' => 'DELETE',
+      'HEAD' =>  'HEAD',
+      'PATCH' => 'PATCH',
+      'OPTIONS' => 'OPTIONS',
     );
-    foreach (array('1','2','3','4','5','6','7','8','9','a','b','c','d','e') as $f) {
-      $options["#{$f}{$f}{$f}"] = ts('Grey (%1)', array(1 => $f));
-    }
-    return $options;
-  }
-
-  /**
-   * Get the fields/elements defined in this form.
-   *
-   * @return array (string)
-   */
-  function getRenderableElementNames() {
-    // The _elements list includes some items which should not be
-    // auto-rendered in the loop -- such as "qfKey" and "buttons".  These
-    // items don't have labels.  We'll identify renderable by filtering on
-    // the 'label'.
-    $elementNames = array();
-    foreach ($this->_elements as $element) {
-      /** @var HTML_QuickForm_Element $element */
-      $label = $element->getLabel();
-      if (!empty($label)) {
-        $elementNames[] = $element->getName();
-      }
-    }
-    return $elementNames;
   }
 }
