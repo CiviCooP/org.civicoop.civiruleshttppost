@@ -5,9 +5,6 @@ require_once 'civiruleshttppost.civix.php';
 if (!class_exists('\Httpful\Bootstrap')) {
   require_once('httpful/bootstrap.php');
 }
-if (!class_exists('OAuthRequestSigner')) {
-  require_once('oauth-php/library/OAuthRequestSigner.php');
-}
 
 /**
  * Implements hook_civicrm_config().

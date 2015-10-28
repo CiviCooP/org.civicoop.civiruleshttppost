@@ -4,9 +4,10 @@ class CRM_Civiruleshttppost_HttpPostAction extends CRM_Civirules_Action {
 
   public function processAction(CRM_Civirules_TriggerData_TriggerData $triggerData) {
     //do the http post process
-    $uri = $this->replaceUriTokens($triggerData);
+    $uri = $this->getFullUri($triggerData);
     $method = $this->getHttpMethod();
-    $body = $this->replaceRequestBodyTokens($triggerData);
+    $body = http_build_query($this->getBodyParams($triggerData));
+
     switch (strtolower($method)) {
       case 'post':
         $request = \Httpful\Request::post($uri, $body);
@@ -33,18 +34,33 @@ class CRM_Civiruleshttppost_HttpPostAction extends CRM_Civirules_Action {
         throw new Exception('Invalid HTTP Method');
     }
 
+    $request->neverSerializePayload();
     $request = $this->alterHttpRequestObject($request, $triggerData);
     $response = $request->send();
-    $this->handleResponse($response, $triggerData);
+    $this->handleResponse($response, $request, $triggerData);
   }
 
   protected function replaceUriTokens(CRM_Civirules_TriggerData_TriggerData $triggerData) {
     return $this->replaceTokens($this->getUri(), $triggerData->getContactId());
   }
 
-  protected function replaceRequestBodyTokens(CRM_Civirules_TriggerData_TriggerData $triggerData) {
-    return $this->replaceTokens($this->getRequestBody(), $triggerData->getContactId());
+  protected function getFullUri(CRM_Civirules_TriggerData_TriggerData $triggerData) {
+    return $this->replaceUriTokens($triggerData);
   }
+
+  protected function getBodyParams(CRM_Civirules_TriggerData_TriggerData $triggerData) {
+    $params = $this->getActionParameters();
+    $bodyParams = explode("&", $params['request_body']);
+    $return = array();
+    foreach($bodyParams as $bodyParam) {
+      list($k, $v) = explode("=", $bodyParam);
+      if (!empty($k)) {
+        $return[$k] = trim($this->replaceTokens($v, $triggerData->getContactId()));
+      }
+    }
+    return $return;
+  }
+
 
   /**
    * Handle the response returned by the server
@@ -53,12 +69,14 @@ class CRM_Civiruleshttppost_HttpPostAction extends CRM_Civirules_Action {
    * By default this class throws an exception when the response has han error
    *
    * @param \Httpful\Response $response
+   * @Param CRM_Civirules_TriggerData_TriggerData $triggerData
+   * @param \Httpful\Request $request
    * @throws \Exception
    */
-  protected function handleResponse(\Httpful\Response $response, CRM_Civirules_TriggerData_TriggerData $triggerData) {
+  protected function handleResponse(\Httpful\Response $response, \Httpful\Request $request, CRM_Civirules_TriggerData_TriggerData $triggerData) {
     //by default throw an error if response is not a 200 response
     if ($response->hasErrors()) {
-      throw new Exception('Invalid response. Got a HTTP '.$response->code."\r\n\r\n".$response->raw_headers."\r\n\r\n".$response->raw_body);
+      throw new Exception('Invalid response. Got a HTTP '.$response->code."\r\n\r\n".$response->raw_headers."\r\n\r\n".$response->raw_body."\r\n\r\nRequest was: ".$request->method.': '.$request->uri."\r\n".$request->raw_headers."\r\n\r\n".$request->payload);
     }
     //do something with the response. You could override this method in a child class to do something with the response.
   }
@@ -96,15 +114,6 @@ class CRM_Civiruleshttppost_HttpPostAction extends CRM_Civirules_Action {
     return $params['uri'];
   }
 
-  /**
-   * Returns the body to send with the request
-   *
-   * @return string
-   */
-  protected function getRequestBody() {
-    $params = $this->getActionParameters();
-    return $params['request_body'];
-  }
 
   protected function replaceTokens($input, $contact_id) {
     //get contact
