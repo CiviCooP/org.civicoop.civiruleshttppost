@@ -18,20 +18,6 @@ class CRM_CiviruleTwitter_Form_TwitterAction extends CRM_CivirulesActions_Form_F
       'cols' => '80', 'rows' => '8',
     ));
 
-    $tokens = CRM_Core_SelectValues::contactTokens();
-
-    //sorted in ascending order tokens by ignoring word case
-    natcasesort($tokens);
-    $this->assign('tokens', json_encode($tokens));
-    $this->add('select', 'token1', ts('Insert Tokens'),
-      $tokens, FALSE,
-      array(
-        'size' => "5",
-        'multiple' => TRUE,
-        'onclick' => "return tokenReplText(this);",
-      )
-    );
-
     $this->addButtons(array(
       array('type' => 'next', 'name' => ts('Save'), 'isDefault' => TRUE,),
       array('type' => 'cancel', 'name' => ts('Cancel'))));

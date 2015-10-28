@@ -12,19 +12,9 @@
     <div class="crm-section">
         <div class="label">{$form.text_message.label}</div>
         <div class="content">
-            <span class="helpIcon" id="helptext">
-                <a href="#" onClick="return showToken('Text', 1);">{$form.token1.label}</a>
-                <div id='tokenText' style="display: none">
-                    <input  style="border:1px solid #999999;" type="text" id="filter1" size="20" name="filter1" onkeyup="filter(this, 1)"/><br />
-                    <span class="description">{ts}Begin typing to filter list of tokens{/ts}</span><br/>
-                    {$form.token1.html}
-                </div>
-            </span>
-            <div class="clear">
-                {$form.text_message.html}
-                <p class="description">{ts}You can use contact tokens{/ts}</p>
-                <p class="description"><span id='char-count-message'></span></p>
-            </div>
+            {$form.text_message.html}
+            <p class="description">{ts}You can use contact tokens{/ts}</p>
+            <p class="description"><span id='char-count-message'></span></p>
         </div>
         <div class="clear"></div>
     </div>
@@ -34,8 +24,6 @@
     </div>
 </div>
 
-
-{include file="CRM/Mailing/Form/InsertTokens.tpl"}
 <script type="text/javascript">
     {literal}
     maxCharInfoDisplay();
