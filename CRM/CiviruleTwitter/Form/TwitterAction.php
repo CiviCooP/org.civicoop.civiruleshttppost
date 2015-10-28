@@ -15,6 +15,7 @@ class CRM_CiviruleTwitter_Form_TwitterAction extends CRM_CivirulesActions_Form_F
     $this->add('select', 'twitter_account', ts('Twitter account'), $this->getTwitterAccounts(), true);
     $this->add('textarea', 'text_message', ts('Status'), array(
       'size' => CRM_Utils_TYpe::HUGE,
+      'cols' => '80', 'rows' => '8',
     ));
 
     $tokens = CRM_Core_SelectValues::contactTokens();
