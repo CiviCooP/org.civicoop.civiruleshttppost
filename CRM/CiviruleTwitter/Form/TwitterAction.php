@@ -13,7 +13,23 @@ class CRM_CiviruleTwitter_Form_TwitterAction extends CRM_CivirulesActions_Form_F
 
     $this->add('hidden', 'rule_action_id');
     $this->add('select', 'twitter_account', ts('Twitter account'), $this->getTwitterAccounts(), true);
-    $this->add('textarea', 'status', ts('Status'));
+    $this->add('textarea', 'text_message', ts('Status'), array(
+      'size' => CRM_Utils_TYpe::HUGE,
+    ));
+
+    $tokens = CRM_Core_SelectValues::contactTokens();
+
+    //sorted in ascending order tokens by ignoring word case
+    natcasesort($tokens);
+    $this->assign('tokens', json_encode($tokens));
+    $this->add('select', 'token1', ts('Insert Tokens'),
+      $tokens, FALSE,
+      array(
+        'size' => "5",
+        'multiple' => TRUE,
+        'onclick' => "return tokenReplText(this);",
+      )
+    );
 
     $this->addButtons(array(
       array('type' => 'next', 'name' => ts('Save'), 'isDefault' => TRUE,),
@@ -35,7 +51,7 @@ class CRM_CiviruleTwitter_Form_TwitterAction extends CRM_CivirulesActions_Form_F
       $defaultValues['twitter_account'] = $data['twitter_account'];
     }
     if (!empty($data['status'])) {
-      $defaultValues['status'] = $data['status'];
+      $defaultValues['text_message'] = $data['status'];
     }
     return $defaultValues;
   }
@@ -43,7 +59,7 @@ class CRM_CiviruleTwitter_Form_TwitterAction extends CRM_CivirulesActions_Form_F
   protected function getSubmittedData() {
     $data = array();
     $data['twitter_account'] = $this->_submitValues['twitter_account'];
-    $data['status'] = $this->_submitValues['status'];
+    $data['status'] = $this->_submitValues['text_message'];
     return $data;
   }
 
