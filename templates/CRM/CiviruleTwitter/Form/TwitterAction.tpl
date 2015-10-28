@@ -42,25 +42,11 @@
 
     cj(function() {
         cj('#text_message').bind({
-            change: function () {
-                maxLengthMessage();
-            },
             keyup: function () {
                 maxCharInfoDisplay();
             }
         });
     });
-
-    function maxLengthMessage()
-    {
-        var len = cj('#text_message').val().length;
-        var maxLength = 140;
-        if (len > maxLength) {
-            cj('#status').crmError({/literal}'{ts escape="js"}Tweet exceeding limit of 140 characters{/ts}'{literal});
-            return false;
-        }
-        return true;
-    }
 
     function maxCharInfoDisplay(){
         var maxLength = 140;
