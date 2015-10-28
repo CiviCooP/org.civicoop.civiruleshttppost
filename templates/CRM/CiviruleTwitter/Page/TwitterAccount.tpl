@@ -1,5 +1,4 @@
 {if $action eq 1 or $action eq 2 or $action eq 8}
-    {include file="CRM/CiviruleTwitter/Form/FinancialType.tpl"}
     {include file="CRM/CiviruleTwitter/Form/TwitterAccount.tpl"}
 {else}
     <div id="ltype">
