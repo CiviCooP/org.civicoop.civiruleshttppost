@@ -53,10 +53,6 @@
         var enteredCharLength = cj('#text_message').val().length;
         var count = maxLength - enteredCharLength;
 
-        if( count < 0 ) {
-            cj('#text_message').val(cj('#text_message').val().substring(0, maxLength));
-            count = 0;
-        }
         cj('#char-count-message').text( "You can insert upto " + count + " characters" );
     }
     {/literal}
