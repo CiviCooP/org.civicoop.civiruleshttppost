@@ -60,7 +60,11 @@ class CRM_CiviruleTwitter_Action extends CRM_Civiruleshttppost_HttpPostAction {
     $twitter_account = new CRM_CiviruleTwitter_BAO_TwitterAccount();
     $twitter_account->id = $params['twitter_account'];
     if ($twitter_account->find(true)) {
-      $account = '@'.$twitter_account->twitter_name.' "'.$twitter_account->description.'"';
+      $description = '';
+      if ($twitter_account->description) {
+        $description = ' "'.$twitter_account->description.'"';
+      }
+      $account = '@'.$twitter_account->twitter_name.' '.$description;
     }
     return sprintf('Tweet: "%s" %s', $params['status'], $account);
   }
