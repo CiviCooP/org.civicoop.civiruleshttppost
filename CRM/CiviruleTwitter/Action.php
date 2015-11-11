@@ -26,7 +26,7 @@ class CRM_CiviruleTwitter_Action extends CRM_Civiruleshttppost_HttpPostAction {
   protected function getBodyParams(CRM_Civirules_TriggerData_TriggerData $triggerData) {
     $bodyParams = parent::getBodyParams($triggerData);
     $params = $this->getActionParameters();
-    $bodyParams['status'] = trim($this->replaceTokens($params['status'], $triggerData->getContactId())).' '.time();
+    $bodyParams['status'] = trim($this->replaceTokens($params['status'], $triggerData->getContactId()));
     return $bodyParams;
   }
 
